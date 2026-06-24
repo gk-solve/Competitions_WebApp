@@ -1,9 +1,12 @@
+// Loads the competitors list from the API and renders it as a table in competitors.htm.
+
 document.addEventListener('DOMContentLoaded', async () => {
 
     const container = document.getElementById('competitors-container');
 
     try {
 
+        // Fetch all competitors (already sorted by name by the API).
         const competitors = await fetchJson('api/competitors.php');
 
         if (competitors.length === 0) {
@@ -11,6 +14,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
+        // Build the table markup as a string, one row per competitor.
         let html = `
             <div class="table-container">
                 <table>
@@ -41,10 +45,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             </div>
         `;
 
+        // Inject the finished table into the page.
         container.innerHTML = html;
     }
     catch (error) {
 
+        // fetchJson already logged the error; just inform the user.
         container.innerHTML =
             '<p>Erreur lors du chargement des compétiteurs.</p>';
     }
