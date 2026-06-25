@@ -1,12 +1,25 @@
 // REST API (V0.2) for Competitions WebApp.
 // Replaces the V0.1 PHP JSON endpoints (api/*.php) one route at a time, same SQLite database.
 
+const path = require('path');
 const express = require('express');
 const { getDatabase } = require('./db');
 const { ApiError } = require('./errors');
 
 const app = express();
-const port = 3000;
+const port = 8080;
+const projectRoot = path.join(__dirname, '..');
+
+// Static frontend (HTML/CSS/JS), replacing the old `php -S` dev server.
+// Mounted per-directory rather than on projectRoot so data/ and server/ are never exposed over HTTP.
+app.use('/css', express.static(path.join(projectRoot, 'css')));
+app.use('/js', express.static(path.join(projectRoot, 'js')));
+app.use('/assets', express.static(path.join(projectRoot, 'assets')));
+
+for (const page of ['index.htm', 'competitions.htm', 'competitors.htm', 'results.htm']) {
+    app.get(`/${page}`, (req, res) => res.sendFile(path.join(projectRoot, page)));
+}
+app.get('/', (req, res) => res.redirect('/index.htm'));
 
 // Fail fast with a clear message if the SQLite file is missing/unreadable.
 let db;
