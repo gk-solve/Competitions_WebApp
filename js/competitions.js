@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
 
         // Fetch all competitions/tracks (already sorted by date by the API).
-        const competitions = await fetchJson('api/competitions.php');
+        const competitions = await fetchJson('api/competitions');
 
         if (competitions.length === 0) {
             container.innerHTML = '<p>Aucune compétition trouvée.</p>';

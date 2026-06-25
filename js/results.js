@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
 
         // Fetch all results (already joined and sorted by the API/Results_View).
-        const results = await fetchJson('api/results.php');
+        const results = await fetchJson('api/results');
 
         if (results.length === 0) {
             container.innerHTML = '<p>Aucun résultat trouvé.</p>';
