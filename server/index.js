@@ -10,16 +10,18 @@ const app = express();
 const port = 8080;
 const projectRoot = path.join(__dirname, '..');
 
-// Static frontend (HTML/CSS/JS), replacing the old `php -S` dev server.
-// Mounted per-directory rather than on projectRoot so data/ and server/ are never exposed over HTTP.
+// Static frontend: the built React SPA (client-react/dist), plus css/ and assets/
+// still served from the project root since the React app links to them directly
+// (see client-react/index.html) instead of bundling its own copy.
 app.use('/css', express.static(path.join(projectRoot, 'css')));
-app.use('/js', express.static(path.join(projectRoot, 'js')));
 app.use('/assets', express.static(path.join(projectRoot, 'assets')));
+app.use(express.static(path.join(projectRoot, 'client-react', 'dist')));
 
-for (const page of ['index.htm', 'competitions.htm', 'competitors.htm', 'results.htm']) {
-    app.get(`/${page}`, (req, res) => res.sendFile(path.join(projectRoot, page)));
-}
-app.get('/', (req, res) => res.redirect('/index.htm'));
+// Client-side routing (React Router): any non-API, non-static GET falls back to the
+// SPA shell so deep links like /competitions survive a full page reload.
+app.get(/^\/(?!api\/).*/, (req, res) => {
+    res.sendFile(path.join(projectRoot, 'client-react', 'dist', 'index.html'));
+});
 
 // Fail fast with a clear message if the SQLite file is missing/unreadable.
 let db;
