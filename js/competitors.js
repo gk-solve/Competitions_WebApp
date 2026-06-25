@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
 
         // Fetch all competitors (already sorted by name by the API).
-        const competitors = await fetchJson('api/competitors.php');
+        const competitors = await fetchJson('api/competitors');
 
         if (competitors.length === 0) {
             container.innerHTML = '<p>Aucun compétiteur trouvé.</p>';
