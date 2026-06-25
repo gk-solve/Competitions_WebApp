@@ -3,14 +3,23 @@
 
 const express = require('express');
 const { getDatabase } = require('./db');
+const { ApiError } = require('./errors');
 
 const app = express();
 const port = 3000;
 
-const db = getDatabase();
+// Fail fast with a clear message if the SQLite file is missing/unreadable.
+let db;
+try {
+    db = getDatabase();
+}
+catch (error) {
+    console.error('Failed to open the database:', error.message);
+    process.exit(1);
+}
 
 // GET /api/competitions - list of competitions/tracks, sorted by date.
-app.get('/api/competitions', (req, res) => {
+app.get('/api/competitions', (req, res, next) => {
     try {
         const rows = db.prepare(`
             SELECT
@@ -28,12 +37,12 @@ app.get('/api/competitions', (req, res) => {
         res.json(rows);
     }
     catch (error) {
-        res.status(500).json({ error: error.message });
+        next(new ApiError(500, 'DB_ERROR', error.message));
     }
 });
 
 // GET /api/competitors - list of competitors, sorted by name.
-app.get('/api/competitors', (req, res) => {
+app.get('/api/competitors', (req, res, next) => {
     try {
         const rows = db.prepare(`
             SELECT
@@ -48,12 +57,12 @@ app.get('/api/competitors', (req, res) => {
         res.json(rows);
     }
     catch (error) {
-        res.status(500).json({ error: error.message });
+        next(new ApiError(500, 'DB_ERROR', error.message));
     }
 });
 
 // GET /api/results - all results, joined via the Results_View SQL view.
-app.get('/api/results', (req, res) => {
+app.get('/api/results', (req, res, next) => {
     try {
         const rows = db.prepare(`
             SELECT *
@@ -68,8 +77,26 @@ app.get('/api/results', (req, res) => {
         res.json(rows);
     }
     catch (error) {
-        res.status(500).json({ error: error.message });
+        next(new ApiError(500, 'DB_ERROR', error.message));
     }
+});
+
+// Unknown route -> 404 with the same JSON error shape as the rest of the API.
+app.use((req, res) => {
+    res.status(404).json({
+        error: { code: 'NOT_FOUND', message: `Route not found: ${req.method} ${req.path}` }
+    });
+});
+
+// Centralized error handler: every route forwards failures here via next(error)
+// instead of formatting the response itself, so the JSON error shape stays consistent.
+app.use((err, req, res, next) => {
+    const statusCode = err.statusCode || 500;
+    const code = err.code || 'INTERNAL_ERROR';
+
+    res.status(statusCode).json({
+        error: { code, message: err.message }
+    });
 });
 
 app.listen(port, () => {
