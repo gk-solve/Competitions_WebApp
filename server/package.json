@@ -1,0 +1,17 @@
+{
+  "name": "competitions-webapp-server",
+  "version": "0.2.0",
+  "description": "REST API (V0.2) for Competitions WebApp, backed by SQLite for now",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "better-sqlite3": "^12.11.1",
+    "express": "^5.2.1"
+  }
+}
