@@ -1,0 +1,16 @@
+<header>
+  <h1>Compétitions Sportives</h1>
+
+  <nav>
+    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Accueil</a>
+    <a routerLink="/competitions" routerLinkActive="active">Compétitions</a>
+    <a routerLink="/competitors" routerLinkActive="active">Compétiteurs</a>
+    <a routerLink="/results" routerLinkActive="active">Résultats</a>
+  </nav>
+</header>
+
+<main>
+  <router-outlet></router-outlet>
+</main>
+
+<footer>Base de données sportive - Version 1.0</footer>

@@ -1,0 +1,15 @@
+<div class="card">
+  <h2>Liste des compétiteurs</h2>
+
+  @if (fetch.error()) {
+    <p>Erreur lors du chargement des compétiteurs.</p>
+  } @else if (!fetch.data()) {
+    <p class="loading">Chargement des compétiteurs...</p>
+  } @else {
+    <app-data-table
+      [columns]="columns"
+      [rows]="fetch.data()!"
+      emptyMessage="Aucun compétiteur trouvé."
+    />
+  }
+</div>

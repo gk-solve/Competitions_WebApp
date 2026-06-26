@@ -1,0 +1,24 @@
+@if (rows.length === 0) {
+  <p>{{ emptyMessage }}</p>
+} @else {
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          @for (column of columns; track column.key) {
+            <th>{{ column.header }}</th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of rows; track row['id'] ?? $index) {
+          <tr>
+            @for (column of columns; track column.key) {
+              <td>{{ row[column.key] ?? '' }}</td>
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}
