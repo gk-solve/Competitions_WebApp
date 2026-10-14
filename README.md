@@ -18,6 +18,22 @@ This web application displays and queries various sports competitions results: c
      - the data layer will be migrated from SQLite to Azure SQL database
      - This more advanced version will run on a clustered server as well.
 
+## Authors and contributors
+
+| Topic | Sub-topic | Author/Contributor |
+|---|---|---|
+| Project management | JIRA | gk-solve |
+| Project management | Versioning with Git | gk-solve |
+| Functional design | | gk-solve |
+| Technical architecture design | Pattern choice | gk-solve |
+| Technical architecture design | Components and frameworks | gk-solve |
+| Development | Code writing | Claude Code |
+| Development | Code comments | Claude Code |
+| Development | Cloud services set up | - |
+| Testing | Test environment set up | Claude Code |
+| Testing | Tests execution | gk-solve |
+| Documentation | README file | Claude Code + gk-solve |
+
 ## Screenshot
 
 ![Competitions WebApp V0.2](Screenshots/CompetitionsWebAppV02-Screenshot.png)
