@@ -27,7 +27,7 @@ This web application displays and queries various sports competitions results: c
 | Functional design | | gk-solve |
 | Technical architecture design | Pattern choice | gk-solve |
 | Technical architecture design | Components and frameworks | gk-solve |
-| Development | Code writing | Claude Code |
+| Development | Code writing (HTML/CSS/JS + SQL DDL) | Claude Code |
 | Development | Code comments | Claude Code |
 | Development | Cloud services set up | - |
 | Testing | Test environment set up | Claude Code |
