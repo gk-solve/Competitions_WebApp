@@ -1,5 +1,5 @@
 // REST API (V0.2) for Competitions WebApp.
-// Replaces the V0.1 PHP JSON endpoints (api/*.php) one route at a time, same SQLite database.
+// Replaced the V0.1 PHP JSON endpoints; reads the same SQLite database.
 
 const path = require('path');
 const express = require('express');

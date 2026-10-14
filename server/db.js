@@ -1,5 +1,4 @@
 // Shared SQLite connection factory used by all REST routes.
-// Mirrors api/db.php for V0.1 parity; the SQLite file itself is unchanged.
 
 const path = require('path');
 const Database = require('better-sqlite3');
