@@ -4,7 +4,9 @@
 
 ## Overview
 
-This web application displays and queries various sports competitions results: cycling, running and open-water swimming.
+This 3-tier web application developed in HTML/CSS/Javascript (Vue.js) using Node.js/Express REST APIs in the backend, displays and queries various sports competitions results: cycling, running and open-water swimming.
+
+One of the objectives is to evaluate the different possible frontend frameworks (Vue.js vs Angular.js vs React.js) and backend frameworks (Node.js/Express vs Java/Springboot vs Python/FastAPI).
 
 1) V0.1 is a prototype - a lightweight 3-tier monolith with:
      - a presentation layer coded in HTML, CSS, Javascript. No JS framework
