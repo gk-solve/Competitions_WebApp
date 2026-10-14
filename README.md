@@ -18,6 +18,10 @@ This web application displays and queries various sports competitions results: c
      - the data layer will be migrated from SQLite to Azure SQL database
      - This more advanced version will run on a clustered server as well.
 
+## Screenshot
+
+![Competitions WebApp V0.2](Screenshots/CompetitionsWebAppV02-Screenshot.png)
+
 ## Current status (as of October 13, 2026 — V0.2 in progress)
 
 | Layer | V0.1 | V0.2 today | Next step |
@@ -124,6 +128,8 @@ Competitions_WebApp/
 │   └── style.css               # Global stylesheet
 ├── assets/
 │   └── favicon.ico
+├── Screenshots/                # Application screenshots used in this README
+│   └── CompetitionsWebAppV02-Screenshot.png
 ├── CLAUDE.md                   # Guidance for Claude Code when working in this repo
 └── README.md
 ```
