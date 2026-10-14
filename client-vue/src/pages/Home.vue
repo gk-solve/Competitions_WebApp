@@ -1,23 +1,23 @@
 <template>
   <div class="card">
-    <h2>Bienvenue</h2>
+    <h2>Welcome</h2>
 
     <p>
-      Cette application permet de consulter une base de données de
-      compétitions sportives amateurs.
+      This application lets you browse a database of amateur sports
+      competitions.
     </p>
 
-    <p>Les sports actuellement gérés sont :</p>
+    <p>The sports currently supported are:</p>
 
     <ul>
-      <li>Course à pied</li>
-      <li>Cyclisme</li>
-      <li>Natation</li>
+      <li>Running</li>
+      <li>Cycling</li>
+      <li>Swimming</li>
     </ul>
 
     <p>
-      Utilisez le menu de navigation pour consulter les compétitions,
-      les compétiteurs et les résultats.
+      Use the navigation menu to browse competitions, competitors
+      and results.
     </p>
   </div>
 </template>

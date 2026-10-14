@@ -6,21 +6,23 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Competitions WebApp displays and queries amateur sports competition results (running, cycling, open-water swimming). It is mid-migration from **V0.1** to **V0.2**:
 
-- **Presentation**: static HTML/CSS + vanilla JavaScript (no framework, no build step) — unchanged from V0.1.
+- **Presentation**: a Vue 3 single-page app in `client-vue/` (Vite + Vue Router), replacing the V0.1 vanilla-JS/`.htm` pages. Vue was chosen over React and Angular after a side-by-side comparison (the `ReactFrontEnd` and `AngularFrontEnd` branches are kept as reference only).
 - **Business logic**: a Node.js/Express REST API in `server/` (replaced the V0.1 PHP JSON endpoints, which have been removed).
 - **Data**: still a single SQLite database at `data/Competitions.sqlite` for now; a future step will migrate this to Azure SQL (likely in a VNet) — keep that in mind before adding SQLite-specific behavior that would be costly to port.
 
 ## Running the app
 
-No build tooling beyond npm. From `server/`:
+Build the Vue app, then start the Express server, both from the project root:
 
 ```bash
-cd server
-npm install   # first time only
-node index.js
+(cd client-vue && npm install && npm run build)   # rebuild after any change in client-vue/src/
+(cd server && npm install)                        # first time only
+node server/index.js
 ```
 
-This single Express process serves **both** the REST API and the static frontend on **port 8080** (fixed by convention for this app — the `run-app` skill and habitual links assume this port). Open `http://localhost:8080/index.htm` (or `competitions.htm`, `competitors.htm`, `results.htm`).
+This single Express process serves **both** the REST API and the built SPA (`client-vue/dist`) on **port 8080** (fixed by convention for this app — the `run-app` skill and habitual links assume this port). Open `http://localhost:8080/`; `/competitions`, `/competitors` and `/results` are client-side routes.
+
+Express serves the **production build**, not a dev server: `client-vue/dist` is gitignored, so it must be rebuilt after a fresh checkout or any change in `client-vue/src/`, otherwise the browser shows stale code. `npm run dev` (Vite dev server) has no proxy configured for `/api`, so it can't reach the API as-is.
 
 To inspect or modify the database directly:
 
@@ -28,21 +30,32 @@ To inspect or modify the database directly:
 sqlite3 data/Competitions.sqlite
 ```
 
-There is no automated lint/test/build command in this repo — verify changes by loading the pages in a browser and checking the `/api/*` JSON output directly (e.g. `http://localhost:8080/api/results`).
+There is no automated test command. `npm run lint` in `client-vue/` runs oxlint on the frontend. Otherwise, verify changes by loading the pages in a browser and checking the `/api/*` JSON output directly (e.g. `http://localhost:8080/api/results`).
 
 ## Architecture
 
-### Page ↔ script ↔ endpoint pairing
+### Vue frontend (`client-vue/src/`)
 
-Each page follows the same fixed pattern; when changing one piece, check the other two:
+- `main.js` creates the app and declares the Vue Router routes (`createWebHistory`, so URLs have no `#`).
+- `App.vue` holds the shared layout: header, navigation (`RouterLink`s), `<RouterView />`, footer.
+- `api.js` exports `fetchJson(url)`, which throws on any non-2xx HTTP status.
+- `useFetchJson.js` is a composable wrapping `fetchJson` that exposes reactive `{ data, error }` refs. Every data page uses it.
+- `DataTable.vue` is the generic table component shared by the 3 data pages. It takes `columns` (`{ key, header }` array), `rows` and `emptyMessage` props.
+- `pages/` holds one component per route: `Home.vue`, `Competitions.vue`, `Competitors.vue`, `Results.vue`.
 
-| Page | Script | Endpoint | Container element |
-|---|---|---|---|
-| `competitions.htm` | `js/competitions.js` | `GET /api/competitions` | `#competitions-container` |
-| `competitors.htm` | `js/competitors.js` | `GET /api/competitors` | `#competitors-container` |
-| `results.htm` | `js/results.js` | `GET /api/results` | `#results-container` |
+### Route ↔ page ↔ endpoint pairing
 
-Each page-specific script: fetches JSON via `fetchJson()` (defined in `js/common.js`, loaded first), builds an HTML `<table>` string by hand, and injects it with `innerHTML`. There is no shared rendering helper between pages — table-building is duplicated intentionally per page; follow the existing style rather than introducing a shared abstraction.
+Each data page follows the same fixed pattern. When changing one piece, check the other two:
+
+| Route | Page component | Endpoint |
+|---|---|---|
+| `/competitions` | `pages/Competitions.vue` | `GET /api/competitions` |
+| `/competitors` | `pages/Competitors.vue` | `GET /api/competitors` |
+| `/results` | `pages/Results.vue` | `GET /api/results` |
+
+Each page declares a `COLUMNS` constant mapping JSON keys (the SQL column names) to English headers, calls `useFetchJson('/api/...')`, then renders an error message, a loading message, or `<DataTable>`. Follow this pattern when adding a page.
+
+Styling comes from the global `css/style.css` at the project root, linked from `client-vue/index.html` (not bundled by Vite). Same for `assets/favicon.ico`. Components don't use scoped styles.
 
 ### Express server (`server/`)
 
@@ -50,8 +63,9 @@ Each page-specific script: fetches JSON via `fetchJson()` (defined in `js/common
 - `server/errors.js` defines `ApiError(statusCode, code, message)` — throw/`next()` this (not a plain `Error`) for anything that should produce a specific HTTP status and machine-readable `code` in the response.
 - `server/index.js`:
   - Mounts `/api/competitions`, `/api/competitors`, `/api/results` (read-only `SELECT`s, no filtering/pagination — all rows always returned, sorted in SQL). `results` reads from the `Results_View` SQL view rather than joining tables in route code; prefer extending the view over adding joins here.
-  - Serves the static frontend by mounting `express.static` **per directory** (`/css`, `/js`, `/assets`) and explicit `app.get` routes for each `.htm` page — deliberately not a single `express.static(projectRoot)`, so `data/` (the SQLite file) and `server/` (source, `node_modules`) are never reachable over HTTP.
-  - Has a catch-all 404 handler and a centralized error-handling middleware (last in the chain) that formats every error as `{"error": {"code": ..., "message": ...}}`. Routes should call `next(new ApiError(...))` on failure rather than formatting their own error response.
+  - Serves the frontend with three `express.static` mounts only: `/css`, `/assets` and `client-vue/dist`. It deliberately doesn't use a single `express.static(projectRoot)`, so `data/` (the SQLite file) and `server/` (source, `node_modules`) are never reachable over HTTP.
+  - Has a catch-all GET route (any path not starting with `/api/`) that returns `client-vue/dist/index.html`, so deep links like `/results` survive a full page reload. It's registered **before** the API routes. Any new API route must stay under `/api/`, otherwise this fallback swallows it.
+  - Has a catch-all 404 handler (in practice only reached by unknown `/api/*` or non-GET requests) and a centralized error-handling middleware (last in the chain) that formats every error as `{"error": {"code": ..., "message": ...}}`. Routes should call `next(new ApiError(...))` on failure rather than formatting their own error response.
   - Fails fast at startup (`process.exit(1)`) if the SQLite file can't be opened.
 
 ### Database schema (`data/Competitions.sqlite`)
@@ -65,4 +79,4 @@ Three base tables plus one view:
 
 ### i18n
 
-All user-facing text (pages, table headers, error messages) is in French; keep new UI strings consistent with this.
+All UI labels (page components, `COLUMNS` headers, error and loading messages) are in English; keep new UI strings consistent with this. Data values coming from the database (sport names, tracks, countries, etc.) are **not** translated and are displayed as stored.

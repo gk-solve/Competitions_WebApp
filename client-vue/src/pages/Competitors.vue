@@ -3,9 +3,9 @@ import DataTable from '../DataTable.vue';
 import { useFetchJson } from '../useFetchJson';
 
 const COLUMNS = [
-    { key: 'Last_Name', header: 'Nom' },
-    { key: 'First_Name', header: 'Prénom' },
-    { key: 'Country_Residence', header: 'Pays' },
+    { key: 'Last_Name', header: 'Last name' },
+    { key: 'First_Name', header: 'First name' },
+    { key: 'Country_Residence', header: 'Country' },
 ];
 
 const { data, error } = useFetchJson('/api/competitors');
@@ -13,15 +13,15 @@ const { data, error } = useFetchJson('/api/competitors');
 
 <template>
   <div class="card">
-    <h2>Liste des compétiteurs</h2>
+    <h2>Competitors</h2>
 
-    <p v-if="error">Erreur lors du chargement des compétiteurs.</p>
-    <p v-else-if="!data" class="loading">Chargement des compétiteurs...</p>
+    <p v-if="error">Error while loading competitors.</p>
+    <p v-else-if="!data" class="loading">Loading competitors...</p>
     <DataTable
       v-else
       :columns="COLUMNS"
       :rows="data"
-      empty-message="Aucun compétiteur trouvé."
+      empty-message="No competitors found."
     />
   </div>
 </template>

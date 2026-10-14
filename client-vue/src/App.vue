@@ -4,13 +4,13 @@ import { RouterLink, RouterView } from 'vue-router';
 
 <template>
   <header>
-    <h1>Compétitions Sportives</h1>
+    <h1>Sports Competitions</h1>
 
     <nav>
-      <RouterLink to="/">Accueil</RouterLink>
-      <RouterLink to="/competitions">Compétitions</RouterLink>
-      <RouterLink to="/competitors">Compétiteurs</RouterLink>
-      <RouterLink to="/results">Résultats</RouterLink>
+      <RouterLink to="/">Home</RouterLink>
+      <RouterLink to="/competitions">Competitions</RouterLink>
+      <RouterLink to="/competitors">Competitors</RouterLink>
+      <RouterLink to="/results">Results</RouterLink>
     </nav>
   </header>
 
@@ -18,5 +18,5 @@ import { RouterLink, RouterView } from 'vue-router';
     <RouterView />
   </main>
 
-  <footer>Base de données sportive - Version 1.0</footer>
+  <footer>Sports database - Version 1.0</footer>
 </template>

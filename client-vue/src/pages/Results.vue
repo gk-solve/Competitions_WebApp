@@ -4,14 +4,14 @@ import { useFetchJson } from '../useFetchJson';
 
 const COLUMNS = [
     { key: 'Sport', header: 'Sport' },
-    { key: 'Competition_Name', header: 'Compétition' },
-    { key: 'Competition_Track', header: 'Épreuve' },
-    { key: 'Last_Name', header: 'Nom' },
-    { key: 'First_Name', header: 'Prénom' },
-    { key: 'Country_Residence', header: 'Pays' },
-    { key: 'Elapsed_Time', header: 'Temps' },
-    { key: 'Individual_Rank', header: 'Rang' },
-    { key: 'Result_Status', header: 'Statut' },
+    { key: 'Competition_Name', header: 'Competition' },
+    { key: 'Competition_Track', header: 'Track' },
+    { key: 'Last_Name', header: 'Last name' },
+    { key: 'First_Name', header: 'First name' },
+    { key: 'Country_Residence', header: 'Country' },
+    { key: 'Elapsed_Time', header: 'Time' },
+    { key: 'Individual_Rank', header: 'Rank' },
+    { key: 'Result_Status', header: 'Status' },
 ];
 
 const { data, error } = useFetchJson('/api/results');
@@ -19,15 +19,15 @@ const { data, error } = useFetchJson('/api/results');
 
 <template>
   <div class="card">
-    <h2>Résultats des compétitions</h2>
+    <h2>Competition results</h2>
 
-    <p v-if="error">Erreur lors du chargement des résultats.</p>
-    <p v-else-if="!data" class="loading">Chargement des résultats...</p>
+    <p v-if="error">Error while loading results.</p>
+    <p v-else-if="!data" class="loading">Loading results...</p>
     <DataTable
       v-else
       :columns="COLUMNS"
       :rows="data"
-      empty-message="Aucun résultat trouvé."
+      empty-message="No results found."
     />
   </div>
 </template>

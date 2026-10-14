@@ -3,10 +3,10 @@ name: run-app
 description: Use this skill when the user says "run the app", "lance l'application", "démarre l'app", or asks to start/preview Competitions WebApp locally. Starts the Express server (server/index.js) on localhost:8080, which serves both the REST API and the built Vue SPA (client-vue/), and opens the app.
 ---
 
-# Run Competitions WebApp locally (Vue frontend, experimental branch)
+# Run Competitions WebApp locally (Vue frontend)
 
-This branch (`VueFrontEnd`) replaces the vanilla-JS/`.htm` frontend with a Vue SPA in
-`client-vue/` (Vite). A single Express process (`server/index.js`) serves both the REST API
+The frontend is a Vue SPA in `client-vue/` (Vite), which replaced the V0.1 vanilla-JS/`.htm`
+pages. A single Express process (`server/index.js`) serves both the REST API
 (`/api/*`) and the built SPA, on **port 8080** (fixed by convention for this app — do not
 change it).
 
@@ -42,7 +42,7 @@ the user/harness is currently in), since the checkout location can vary between 
    ```
 
 4. Build the Vue app if it hasn't been built yet, or if source files changed since the last
-   build (this branch serves the production build, not a dev server — rebuild after editing
+   build (Express serves the production build, not a dev server — rebuild after editing
    `client-vue/src/**`):
    ```bash
    (cd client-vue && npm install && npm run build)

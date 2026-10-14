@@ -4,11 +4,11 @@ import { useFetchJson } from '../useFetchJson';
 
 const COLUMNS = [
     { key: 'Sport', header: 'Sport' },
-    { key: 'Competition_Name', header: 'Compétition' },
-    { key: 'Competition_Track', header: 'Épreuve' },
+    { key: 'Competition_Name', header: 'Competition' },
+    { key: 'Competition_Track', header: 'Track' },
     { key: 'Competition_Date', header: 'Date' },
-    { key: 'Location_City', header: 'Ville' },
-    { key: 'Location_Country', header: 'Pays' },
+    { key: 'Location_City', header: 'City' },
+    { key: 'Location_Country', header: 'Country' },
 ];
 
 const { data, error } = useFetchJson('/api/competitions');
@@ -16,15 +16,15 @@ const { data, error } = useFetchJson('/api/competitions');
 
 <template>
   <div class="card">
-    <h2>Liste des compétitions</h2>
+    <h2>Competitions</h2>
 
-    <p v-if="error">Erreur lors du chargement des compétitions.</p>
-    <p v-else-if="!data" class="loading">Chargement des compétitions...</p>
+    <p v-if="error">Error while loading competitions.</p>
+    <p v-else-if="!data" class="loading">Loading competitions...</p>
     <DataTable
       v-else
       :columns="COLUMNS"
       :rows="data"
-      empty-message="Aucune compétition trouvée."
+      empty-message="No competitions found."
     />
   </div>
 </template>
